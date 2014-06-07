@@ -29,7 +29,7 @@ public class Board
 		board[3][8].setPiece(new Queen("D8","b"));
 		board[4][8] = new Space("  ");
 		board[4][8].setPiece(new King("E8","b"));
-		bking_loc = "E8";
+		bking_loc = "e8";
 		board[5][8] = new Space("##");
 		board[5][8].setPiece(new Bishop("F8","b"));
 		board[6][8] = new Space("  ");
@@ -124,7 +124,7 @@ public class Board
 		board[3][1].setPiece(new Queen("D1","w"));
 		board[4][1] = new Space("##");
 		board[4][1].setPiece(new King("E1","w"));
-		wking_loc = "E1";
+		wking_loc = "e1";
 		board[5][1] = new Space("  ");
 		board[5][1].setPiece(new Bishop("F1","w"));
 		board[6][1] = new Space("##");
@@ -237,7 +237,7 @@ public class Board
 		}
 		if(object instanceof Pawn)
 		{
-			//TODO do the one for pawn, should be easy
+			return isClear(old_pos,new_pos,(Pawn) object);
 		}
 		return true;
 		
@@ -535,7 +535,27 @@ public class Board
 	}
 	public boolean isClear(String old_pos,String new_pos,Pawn pawn)
 	{
-		System.out.println("is a queen!");
+		String convert_new_pos = CUtil.pos_Finder(new_pos);
+		int nfile = Integer.parseInt(convert_new_pos.substring(0,1));
+		int nrank = Integer.parseInt(convert_new_pos.substring(1));
+		String convert_old_pos=CUtil.pos_Finder(old_pos);
+		int ofile = Integer.parseInt(convert_old_pos.substring(0,1));
+		int orank = Integer.parseInt(convert_old_pos.substring(1));
+		
+		if(pawn.getColor().equals("w")&&Math.abs(orank-nrank)==2)
+		{
+			if(!board[nfile][nrank-1].isEmpty())
+			{
+				return false;
+			}
+		}
+		if(pawn.getColor().equals("b")&&Math.abs(orank-nrank)==2)
+		{
+			if(!board[nfile][nrank+1].isEmpty())
+			{
+				return false;
+			}
+		}
 		return true;
 	}
 	
@@ -660,10 +680,7 @@ public class Board
 			wking_loc = new_location;
 		}
 	}
-	public boolean promotePawn(String location)//TODO fill this in
-	{
-		return false;
-	}
+	
 	public String[] kingsMovements(String color)
 	{
 		String convert_pos;
@@ -865,5 +882,16 @@ public class Board
 			updateKingLoc((King) piece,new_pos);
 		}
 		
+	}
+	/**
+	 * removes a Piece from the board
+	 * @param location location of piece to be removed
+	 */
+	public void removePiece(String location) 
+	{
+		String convert_new_pos = CUtil.pos_Finder(location);
+		int file = Integer.parseInt(convert_new_pos.substring(0,1));
+		int rank = Integer.parseInt(convert_new_pos.substring(1));
+		board[file][rank].clearPiece();	
 	}
 }
